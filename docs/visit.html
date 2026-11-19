@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Visit · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="visit">
+  <main class="wrap" style="max-width:46rem">
+    <h1>Plan the drive</h1>
+    <p class="lede">Cedar Junction sits on Graham Road, Zwavelpoort — about 8 km east of the Solomon Mahlangu intersection along Lynnwood Road.</p>
+    <div class="grid2">
+      <div class="card">
+        <h2>Gate fees</h2>
+        <p>Adults R150</p>
+        <p>Children 2–12 R130</p>
+        <p class="muted">16, 25 & 26 Dec 2026 and 1 Jan 2027: adults R200, children R150.</p>
+      </div>
+      <div class="card">
+        <h2>Season</h2>
+        <p class="muted">Slides close from 1 June. The whole park is closed 1–31 July. Winter days are picnic, train and play — no water.</p>
+      </div>
+    </div>
+    <h2 style="margin-top:2rem;color:var(--cedar)">House rules</h2>
+    <ul id="rules" style="list-style:none;padding:0"></ul>
+    <p><a class="btn gold" href="book.html">Request a booking</a></p>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("rules").innerHTML = CJ.rules.map((r) => `<li class="point">${r}</li>`).join("");
+  </script>
+</body>
+</html>

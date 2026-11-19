@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parties · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="parties">
+  <main class="wrap">
+    <h1>Party packages</h1>
+    <p class="lede">Themes are yours to bring — the park supplies the setting, the train and the water. Music stays off, inside and in the car park.</p>
+    <div class="cards" id="list"></div>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("list").innerHTML = CJ.packages.map((p) => `
+      <article class="card">
+        <p class="price">${p.price}</p>
+        <h2>${p.name}</h2>
+        <p class="muted">${p.blurb}</p>
+        ${p.points.map((pt) => `<p class="point">${pt}</p>`).join("")}
+        <p><a class="btn cedar" href="book.html">Start this booking</a></p>
+      </article>`).join("");
+  </script>
+</body>
+</html>

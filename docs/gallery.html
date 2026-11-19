@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gallery · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="gallery">
+  <main class="wrap">
+    <h1>The grounds</h1>
+    <p class="lede">Colour studies of the park while the photo library is being reshot. Filters match how families look for pictures.</p>
+    <div class="filters" id="filters"></div>
+    <div class="cards" id="grid" style="grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))"></div>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    const tags = ["All", "Train", "Water", "Play", "Lapas", "Parties"];
+    let tag = "All";
+    const filters = document.getElementById("filters");
+    const grid = document.getElementById("grid");
+    function draw() {
+      filters.innerHTML = tags.map((t) => `<button class="chip ${t === tag ? "on" : ""}" type="button" data-t="${t}">${t}</button>`).join("");
+      grid.innerHTML = CJ.gallery.filter((g) => tag === "All" || g[1] === tag).map(([title, t, bg]) =>
+        `<figure class="tile" style="background:${bg}"><small>${t}</small><figcaption class="display" style="font-size:1.6rem">${title}</figcaption></figure>`).join("");
+    }
+    filters.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      tag = b.dataset.t;
+      draw();
+    });
+    draw();
+  </script>
+</body>
+</html>

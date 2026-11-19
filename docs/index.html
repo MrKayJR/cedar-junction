@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cedar Junction · Pretoria East</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="home">
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <p class="pill">Summer season · slides open</p>
+        <h1>A country day, with a real little railway.</h1>
+        <p class="lede">Miniature trains around a lake, waterslides, jungle gyms and thatched lapas — at the foot of the Bronberg in Pretoria East.</p>
+        <div class="row">
+          <a class="btn gold" href="book.html">Plan your visit</a>
+          <a class="btn ghost" href="venues.html">Choose a lapa</a>
+        </div>
+        <dl class="stats">
+          <div class="stat"><span>Adults</span><strong>R150</strong></div>
+          <div class="stat"><span>Ages 2–12</span><strong>R130</strong></div>
+          <div class="stat"><span>Google</span><strong>4.3</strong></div>
+        </dl>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="grass"></div>
+        <div class="lake"></div>
+        <div class="train"><span class="engine"></span><span class="car"></span><span class="car"></span><span class="car"></span></div>
+        <p>Lake, train, thatch — Zwavelpoort</p>
+      </div>
+    </section>
+    <section class="grid4" id="attractions"></section>
+    <section class="split">
+      <div class="panel">
+        <h2>Parties without the brochure wall.</h2>
+        <p class="muted">Filter lapas by size and price, then send a clear booking — date, guests, venue — instead of a blank enquiry form.</p>
+        <p><a class="btn cedar" href="packages.html">See party packages</a></p>
+      </div>
+      <div class="panel dark">
+        <h2>Before you leave home</h2>
+        <ul>
+          <li>Bookings are essential, even for a walk-in day.</li>
+          <li>No music, no pets, no cash.</li>
+          <li>Weekdays need 50+ people before the gates open.</li>
+        </ul>
+        <a href="visit.html">Full visit notes</a>
+      </div>
+    </section>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("attractions").innerHTML = CJ.attractions.map(([name, detail]) =>
+      `<article class="card"><h2>${name}</h2><p class="muted">${detail}</p></article>`).join("");
+  </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lapas · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="venues">
+  <main class="wrap">
+    <h1>Lapas & venues</h1>
+    <p class="lede">From R300 for a small lapa to R600 for Whistle Stop or the big lakeside shelter. Each comes with benches and a braai. No power points.</p>
+    <div class="filters" id="kinds"></div>
+    <div class="filters" id="zones"></div>
+    <div class="layout">
+      <div class="cards" id="list"></div>
+      <aside class="sketch">
+        <p>Park sketch</p>
+        <div class="map" id="map"><div class="pond"></div></div>
+        <p>Pins are a guide, not a survey. Ask for the printed map when you book.</p>
+        <a class="btn gold" id="go" href="book.html" style="display:block;text-align:center">Continue to booking</a>
+      </aside>
+    </div>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    const kinds = ["All", "Lapa", "Private venue", "Shed"];
+    const zones = ["All", "Lakeside", "Water world", "Play lawn", "Station"];
+    const caps = [["any", "Any size"], ["15", "15+ people"], ["20", "20+ people"], ["25", "25+ people"]];
+    let kind = "All", zone = "All", cap = "any", picked = null;
+    const kindEl = document.getElementById("kinds");
+    const zoneEl = document.getElementById("zones");
+    const list = document.getElementById("list");
+    const map = document.getElementById("map");
+    const go = document.getElementById("go");
+
+    function drawFilters() {
+      kindEl.innerHTML = kinds.map((k) => `<button class="chip ${k === kind ? "on" : ""}" data-k="${k}" type="button">${k}</button>`).join("");
+      zoneEl.innerHTML = zones.map((z) => `<button class="chip water ${z === zone ? "on" : ""}" data-z="${z}" type="button">${z}</button>`).join("")
+        + caps.map(([c, label]) => `<button class="chip gold ${c === cap ? "on" : ""}" data-c="${c}" type="button">${label}</button>`).join("");
+    }
+    function draw() {
+      drawFilters();
+      const items = CJ.venues.filter((v) => {
+        if (kind !== "All" && v.kind !== kind) return false;
+        if (zone !== "All" && v.zone !== zone) return false;
+        if (cap !== "any" && v.capacity < Number(cap)) return false;
+        return true;
+      });
+      list.innerHTML = items.length ? items.map((v) => `
+        <button class="card ${picked === v.id ? "on" : ""}" type="button" data-id="${v.id}">
+          <div style="display:flex;justify-content:space-between;gap:.5rem"><h2>${v.name}</h2><span class="badge">${v.kind}</span></div>
+          <p class="muted">${v.note}</p>
+          <p class="meta"><span>${v.zone} · ${v.capacity} people</span><span class="price">R${v.price}</span></p>
+        </button>`).join("") : `<p class="muted">Nothing in that mix. Widen the filters.</p>`;
+      const pins = CJ.venues.slice(0, 12);
+      map.querySelectorAll(".pin").forEach((n) => n.remove());
+      pins.forEach((v, i) => {
+        const s = document.createElement("span");
+        s.className = "pin" + (picked === v.id ? " on" : "");
+        s.title = v.name;
+        s.style.left = (12 + (i % 4) * 22) + "%";
+        s.style.top = (18 + Math.floor(i / 4) * 24) + "%";
+        map.appendChild(s);
+      });
+      go.href = picked ? `book.html?venue=${picked}` : "book.html";
+      go.textContent = picked ? "Book this venue" : "Continue to booking";
+    }
+    document.querySelector("main").addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      if (b.dataset.k) kind = b.dataset.k;
+      if (b.dataset.z) zone = b.dataset.z;
+      if (b.dataset.c) cap = b.dataset.c;
+      if (b.dataset.id) picked = b.dataset.id;
+      draw();
+    });
+    draw();
+  </script>
+</body>
+</html>

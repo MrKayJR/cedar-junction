@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Activities · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="activities">
+  <main class="wrap">
+    <h1>What the day holds</h1>
+    <p class="lede">Rides are included with entrance. Slides have age and weight limits posted at each one.</p>
+    <ol class="grid2" id="list" style="list-style:none;padding:0"></ol>
+    <p><a class="btn gold" href="book.html">Book the day</a></p>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("list").innerHTML = CJ.attractions.map(([name, detail], i) =>
+      `<li class="card"><span class="num">${String(i + 1).padStart(2, "0")}</span><h2>${name}</h2><p class="muted">${detail}</p></li>`).join("");
+  </script>
+</body>
+</html>

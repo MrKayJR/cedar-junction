@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book · Cedar Junction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-page="book">
+  <main class="wrap" style="max-width:36rem" id="app"></main>
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const steps = ["Visit", "People", "Place", "Send"];
+    const state = {
+      step: 0,
+      kind: "Party or lapa",
+      date: "",
+      adults: 4,
+      children: 6,
+      venueId: params.get("venue") || "lapa-6",
+      name: "",
+      phone: "",
+      note: "",
+      ref: null
+    };
+    const app = document.getElementById("app");
+    function venue() { return CJ.venues.find((v) => v.id === state.venueId) || CJ.venues[0]; }
+    function entrance() { return state.adults * 150 + state.children * 130; }
+
+    function render() {
+      if (state.ref) {
+        app.innerHTML = `<section class="center"><p class="price">Request received</p><h1>We’ll confirm ${state.ref}</h1><p class="muted">This is a request, not a paid ticket. Call 082 766 2748 if your date is inside 48 hours. Keep your reference for the gate.</p></section>`;
+        return;
+      }
+      const v = venue();
+      const guests = state.adults + state.children;
+      let body = "";
+      if (state.step === 0) {
+        body = `<div class="grid2">
+          ${["Day visit", "Party or lapa"].map((k) => `<button class="card ${state.kind === k ? "on" : ""}" data-kind="${k}" type="button"><strong>${k}</strong></button>`).join("")}
+        </div>
+        <label style="margin-top:1rem">Date<input type="date" id="date" value="${state.date}" /></label>`;
+      } else if (state.step === 1) {
+        body = `<div class="grid2">
+          ${[["Adults", "adults"], ["Children 2–12", "children"]].map(([label, key]) => `
+            <div class="card"><p class="muted">${label}</p><div class="count">
+              <button type="button" data-dec="${key}">−</button>
+              <span class="display" style="font-size:2rem;color:var(--cedar)">${state[key]}</span>
+              <button type="button" data-inc="${key}">+</button>
+            </div></div>`).join("")}
+          <p class="muted" style="grid-column:1/-1">Entrance estimate R${entrance()}. Public-holiday rates are higher and confirmed with your booking.</p>
+        </div>`;
+      } else if (state.step === 2) {
+        body = state.kind === "Day visit"
+          ? `<p class="card">No lapa hire. Arrive early on busy days — a day booking does not guarantee a spot if the park is full.</p>`
+          : `<label>Venue for ${guests} people<select id="venue">${CJ.venues.map((item) => `<option value="${item.id}" ${item.id === state.venueId ? "selected" : ""}>${item.name} · ${item.capacity} · R${item.price}</option>`).join("")}</select></label>`;
+      } else {
+        body = `<label>Your name<input id="name" value="${state.name}" /></label>
+          <label style="margin-top:.6rem">Mobile<input id="phone" value="${state.phone}" /></label>
+          <label style="margin-top:.6rem">Note<textarea id="note" rows="3">${state.note}</textarea></label>
+          <div class="summary">
+            <p>${state.kind} · ${state.date || "date TBC"} · ${state.adults} adults, ${state.children} children</p>
+            ${state.kind === "Party or lapa" ? `<p>${v.name} hire R${v.price}</p>` : ""}
+            <p>Entrance estimate R${entrance()}</p>
+          </div>`;
+      }
+      app.innerHTML = `<h1>Book</h1>
+        <div class="steps">${steps.map((s, i) => `<span class="${i === state.step ? "on" : ""}">${s}</span>`).join("")}</div>
+        ${body}
+        <div class="row" style="justify-content:space-between">
+          <button class="btn ghost" type="button" id="back" ${state.step === 0 ? "disabled" : ""}>Back</button>
+          ${state.step < 3
+            ? `<button class="btn gold" type="button" id="next">Next</button>`
+            : `<button class="btn cedar" type="button" id="send" ${!state.name || !state.phone ? "disabled" : ""}>Send request</button>`}
+        </div>`;
+    }
+
+    app.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (!b) return;
+      if (b.dataset.kind) state.kind = b.dataset.kind;
+      if (b.dataset.inc) state[b.dataset.inc] += 1;
+      if (b.dataset.dec) state[b.dataset.dec] = Math.max(0, state[b.dataset.dec] - 1);
+      if (b.id === "back") state.step = Math.max(0, state.step - 1);
+      if (b.id === "next") state.step += 1;
+      if (b.id === "send") {
+        state.ref = "CJ-" + String(Date.now()).slice(-6);
+        const record = { ...state, venue: venue().name, entrance: entrance() };
+        const prev = JSON.parse(localStorage.getItem("cj-bookings") || "[]");
+        localStorage.setItem("cj-bookings", JSON.stringify([record, ...prev].slice(0, 12)));
+      }
+      sync();
+      render();
+    });
+    app.addEventListener("change", sync);
+    app.addEventListener("input", sync);
+    function sync() {
+      const date = document.getElementById("date");
+      const venueSel = document.getElementById("venue");
+      const name = document.getElementById("name");
+      const phone = document.getElementById("phone");
+      const note = document.getElementById("note");
+      if (date) state.date = date.value;
+      if (venueSel) state.venueId = venueSel.value;
+      if (name) state.name = name.value;
+      if (phone) state.phone = phone.value;
+      if (note) state.note = note.value;
+      const send = document.getElementById("send");
+      if (send) send.disabled = !state.name || !state.phone;
+    }
+    render();
+  </script>
+</body>
+</html>
